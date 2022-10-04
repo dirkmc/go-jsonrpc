@@ -1,7 +1,7 @@
 package jsonrpc
 
 import (
-	"encoding/json"
+	gojson "encoding/json"
 	"fmt"
 	"math"
 	"math/rand"
@@ -26,7 +26,7 @@ func (p *param) MarshalJSON() ([]byte, error) {
 		return p.data, nil
 	}
 
-	return json.Marshal(p.v.Interface())
+	return gojson.Marshal(p.v.Interface())
 }
 
 // processFuncOut finds value and error Outs in function

@@ -2,7 +2,7 @@ package jsonrpc
 
 import (
 	"context"
-	"encoding/json"
+	gojson "encoding/json"
 	"io"
 	"net/http"
 	"reflect"
@@ -115,7 +115,7 @@ func rpcError(wf func(func(io.Writer)), req *request, code ErrorCode, err error)
 			},
 		}
 
-		err = json.NewEncoder(w).Encode(resp)
+		err = gojson.NewEncoder(w).Encode(resp)
 		if err != nil {
 			log.Warnf("failed to write rpc error: %s", err)
 			return

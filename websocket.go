@@ -2,7 +2,7 @@ package jsonrpc
 
 import (
 	"context"
-	"encoding/json"
+	gojson "encoding/json"
 	"errors"
 	"io"
 	"io/ioutil"
@@ -30,7 +30,7 @@ type frame struct {
 	Params []param `json:"params,omitempty"`
 
 	// response
-	Result json.RawMessage `json:"result,omitempty"`
+	Result gojson.RawMessage `json:"result,omitempty"`
 	Error  *respError      `json:"error,omitempty"`
 }
 
@@ -191,7 +191,7 @@ func (c *wsConn) handleOutChans() {
 					Result:  registration.chID,
 				}
 
-				if err := json.NewEncoder(w).Encode(resp); err != nil {
+				if err := gojson.NewEncoder(w).Encode(resp); err != nil {
 					log.Error(err)
 					return
 				}
@@ -298,7 +298,7 @@ func (c *wsConn) cancelCtx(req frame) {
 	}
 
 	var id int64
-	if err := json.Unmarshal(req.Params[0].data, &id); err != nil {
+	if err := gojson.Unmarshal(req.Params[0].data, &id); err != nil {
 		log.Error("handle me:", err)
 		return
 	}
@@ -318,7 +318,7 @@ func (c *wsConn) cancelCtx(req frame) {
 
 func (c *wsConn) handleChanMessage(frame frame) {
 	var chid uint64
-	if err := json.Unmarshal(frame.Params[0].data, &chid); err != nil {
+	if err := gojson.Unmarshal(frame.Params[0].data, &chid); err != nil {
 		log.Error("failed to unmarshal channel id in xrpc.ch.val: %s", err)
 		return
 	}
@@ -334,7 +334,7 @@ func (c *wsConn) handleChanMessage(frame frame) {
 
 func (c *wsConn) handleChanClose(frame frame) {
 	var chid uint64
-	if err := json.Unmarshal(frame.Params[0].data, &chid); err != nil {
+	if err := gojson.Unmarshal(frame.Params[0].data, &chid); err != nil {
 		log.Error("failed to unmarshal channel id in xrpc.ch.val: %s", err)
 		return
 	}
@@ -360,7 +360,7 @@ func (c *wsConn) handleResponse(frame frame) {
 	if req.retCh != nil && frame.Result != nil {
 		// output is channel
 		var chid uint64
-		if err := json.Unmarshal(frame.Result, &chid); err != nil {
+		if err := gojson.Unmarshal(frame.Result, &chid); err != nil {
 			log.Errorf("failed to unmarshal channel id response: %s, data '%s'", err, string(frame.Result))
 			return
 		}
@@ -609,7 +609,7 @@ func (c *wsConn) handleWsConn(ctx context.Context) {
 				// r = io.TeeReader(r, os.Stderr)
 
 				var frame frame
-				err = json.NewDecoder(r).Decode(&frame)
+				err = gojson.NewDecoder(r).Decode(&frame)
 				if err == nil {
 					c.handleFrame(ctx, frame)
 					go c.nextMessage()

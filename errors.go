@@ -1,7 +1,7 @@
 package jsonrpc
 
 import (
-	"encoding/json"
+	gojson "encoding/json"
 	"reflect"
 )
 
@@ -48,6 +48,6 @@ func (e *Errors) Register(c ErrorCode, typ interface{}) {
 }
 
 type marshalable interface {
-	json.Marshaler
-	json.Unmarshaler
+	gojson.Marshaler
+	gojson.Unmarshaler
 }

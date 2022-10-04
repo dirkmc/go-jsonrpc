@@ -5,7 +5,7 @@ import (
 	"container/list"
 	"context"
 	"encoding/base64"
-	"encoding/json"
+	gojson "encoding/json"
 	"fmt"
 	"net"
 	"net/http"
@@ -16,10 +16,13 @@ import (
 
 	"github.com/gorilla/websocket"
 	logging "github.com/ipfs/go-log/v2"
+	jsoniter "github.com/json-iterator/go"
 	"go.opencensus.io/trace"
 	"go.opencensus.io/trace/propagation"
 	"golang.org/x/xerrors"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 const (
 	methodMinRetryDelay = 100 * time.Millisecond
@@ -65,10 +68,10 @@ func (e *ErrClient) Unwrap() error {
 }
 
 type clientResponse struct {
-	Jsonrpc string          `json:"jsonrpc"`
-	Result  json.RawMessage `json:"result"`
-	ID      int64           `json:"id"`
-	Error   *respError      `json:"error,omitempty"`
+	Jsonrpc string            `json:"jsonrpc"`
+	Result  gojson.RawMessage `json:"result"`
+	ID      int64             `json:"id"`
+	Error   *respError        `json:"error,omitempty"`
 }
 
 type makeChanSink func() (context.Context, func([]byte, bool))

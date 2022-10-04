@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"encoding/json"
+	gojson "encoding/json"
 	"fmt"
 	"io"
 	"reflect"
@@ -52,7 +52,7 @@ const DEFAULT_MAX_REQUEST_SIZE = 100 << 20 // 100 MiB
 type respError struct {
 	Code    ErrorCode       `json:"code"`
 	Message string          `json:"message"`
-	Meta    json.RawMessage `json:"meta,omitempty"`
+	Meta    gojson.RawMessage `json:"meta,omitempty"`
 }
 
 func (e *respError) Error() string {
